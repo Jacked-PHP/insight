@@ -1,5 +1,5 @@
 
-# Jacked RAG
+# Insight - Jacked RAG
 
 RAG - Retrieval Augmented Generation. This is the Jacked initiative for that within the PHP ecosystem.
 
