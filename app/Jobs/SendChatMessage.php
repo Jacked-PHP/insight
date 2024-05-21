@@ -15,7 +15,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use OpenAI\Laravel\Facades\OpenAI;
-use Ramsey\Uuid\Uuid;
 
 class SendChatMessage implements ShouldQueue
 {

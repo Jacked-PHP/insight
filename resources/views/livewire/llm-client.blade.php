@@ -1,4 +1,6 @@
 
+@use('Illuminate\Support\Arr')
+
 <div class="h-[calc(100vh-80px)] flex flex-col p-4 mx-auto max-w-4xl bg-white" x-data="ollamaclient">
     <ul role="list" class="flex-grow space-y-6 pt-[10px] pr-[5px] overflow-auto" x-ref="chatcontainer">
         @foreach($messages as $message)
@@ -13,11 +15,11 @@
                 <div class="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-200">
                     <div class="flex justify-between gap-x-4">
                         <div class="py-0.5 text-xs leading-5 text-gray-500">
-                            <span class="font-medium text-gray-900">{{ \Illuminate\Support\Arr::get($message, 'sender.name', '') }}</span>
+                            <span class="font-medium text-gray-900">{{ Arr::get($message, 'sender.name', '') }}</span>
                         </div>
-                        <time datetime="{{ \Illuminate\Support\Arr::get($message, 'timestamp', '') }}" class="flex-none py-0.5 text-xs leading-5 text-gray-500"></time>
+                        <time datetime="{{ Arr::get($message, 'timestamp', '') }}" class="flex-none py-0.5 text-xs leading-5 text-gray-500"></time>
                     </div>
-                    <p class="text-md leading-6 text-gray-800 message-item-{{ \Illuminate\Support\Arr::get($message, 'type') }}" id="{{ \Illuminate\Support\Arr::get($message, 'uuid') }}">{{ \Illuminate\Support\Arr::get($message, 'message', '') }}</p>
+                    <p class="text-md leading-6 text-gray-800 message-item-{{ Arr::get($message, 'type') }}" id="{{ Arr::get($message, 'uuid') }}">{{ Arr::get($message, 'message', '') }}</p>
                 </div>
             </li>
         @endforeach

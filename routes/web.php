@@ -1,7 +1,7 @@
 <?php
 
 use App\Livewire\LoginForm;
-use App\Livewire\OllamaClient;
+use App\Livewire\LlmClient;
 use App\Livewire\RegisterForm;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +48,6 @@ Route::get('register', RegisterForm::class)->name('register');
 // Chat
 // =============================================================================
 
-Route::get('/chat/{chat}', OllamaClient::class)
+Route::get('/chat/{chat}', LlmClient::class)
     ->middleware('auth:sanctum')
     ->name('chat');

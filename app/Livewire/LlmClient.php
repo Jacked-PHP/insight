@@ -3,18 +3,14 @@
 namespace App\Livewire;
 
 use App\Enums\MessageType;
-use App\Events\ChatMessageEvent;
-use App\Jobs\SendChatMessage;
 use App\Models\Chat;
 use App\Models\Message;
 use App\Models\User;
-use Cloudstudio\Ollama\Facades\Ollama;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class OllamaClient extends Component
+class LlmClient extends Component
 {
     public int $userId;
     public string $host;
@@ -112,7 +108,7 @@ class OllamaClient extends Component
 
     public function render()
     {
-        return view('livewire.ollama-client', [
+        return view('livewire.llm-client', [
             'messages' => $this->messages,
         ]);
     }
