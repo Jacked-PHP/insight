@@ -28,11 +28,6 @@ class LlmClient extends Component
 
         /** @var User $user */
         $user = auth()->user();
-        // TODO: just a test thing...
-        if ($user === null) {
-            Auth::loginUsingId(1);
-            $user = auth()->user();
-        }
 
         $this->participants = [
             [
