@@ -34,9 +34,7 @@
         <div action="#" class="relative flex-grow flex">
             <div class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 flex-grow">
                 <label for="comment" class="sr-only">Add your comment</label>
-                <textarea @keyup.enter="sendMessage()" rows="1" name="comment" x-ref="message"
-                          class="block w-full h-full resize-none border-0 py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 bg-transparent"
-                          placeholder="Add your message..." :readonly="!chatAvailable"></textarea>
+                <textarea @input="event.target.style.height = 'auto'; event.target.style.height = event.target.scrollHeight + 'px';" rows="1" name="comment" x-ref="message" class="block w-full resize-none border-0 py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 bg-transparent overflow-auto max-h-60" placeholder="Add your message..." :readonly="!chatAvailable"></textarea>
             </div>
 
             <div class="inset-x-0 bottom-0 flex flex-grow-0 justify-between py-2 pl-3 pr-2">
