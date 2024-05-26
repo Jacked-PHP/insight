@@ -21,10 +21,12 @@ class LlmClient extends Component
     public string $chatUuid;
     public array $messages;
     public string $response;
+    public string $chatName;
 
     public function mount(string $chat)
     {
         $this->chatUuid = $chat;
+        $chat = auth()->user()->chats()->where('uuid', $this->chatUuid)->first();
 
         /** @var User $user */
         $user = auth()->user();
@@ -44,21 +46,20 @@ class LlmClient extends Component
             ]
         ];
 
-        $this->loadMessages();
+        $this->loadMessages($chat);
 
         $this->userId = $user->id;
         $this->host = config('jacked-server.host');
         $this->protocol = config('jacked-server.ssl-enabled') ? 'wss' : 'ws';
         $this->port = config('jacked-server.ssl-enabled') ? config('jacked-server.ssl-port') : config('jacked-server.port');
         $this->channel = 'private-chat-channel.' . $user->id;
+        $this->chatName = $chat->name;
     }
 
-    public function loadMessages()
+    public function loadMessages(?Chat $chat = null)
     {
-        $this->messages = auth()->user()->chats()->where('uuid', $this->chatUuid)->first()
-            ->messages
-            ->map([$this, 'formatMessage'])
-            ->toArray();
+        $chat = $chat ?? auth()->user()->chats()->where('uuid', $this->chatUuid)->first();
+        $this->messages = $chat->messages->map([$this, 'formatMessage'])->toArray();
     }
 
     public function formatMessage(Message $message): array
@@ -98,7 +99,7 @@ class LlmClient extends Component
             'parent_id' => $messageRecord->id,
         ]);
 
-        $this->loadMessages();
+        $this->loadMessages($chat);
     }
 
     public function render()

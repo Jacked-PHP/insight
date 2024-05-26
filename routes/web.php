@@ -23,7 +23,7 @@ Route::get('/', function () {
 
     $chat = $user->chats()->create([
         'uuid' => Uuid::uuid4()->toString(),
-        'name' => 'My Conversation',
+        'name' => fake()->company,
     ]);
 
     return redirect(route('chat', [

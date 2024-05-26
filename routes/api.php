@@ -1,7 +1,6 @@
 <?php
 
 use App\Jobs\SendChatMessage;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

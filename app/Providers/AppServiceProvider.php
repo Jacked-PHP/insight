@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
                 $current = $route->named('chat')
                     && $route->parameter('chat') === $chat->uuid;
                 $menu['chats'][] = [
-                    'name' => $chat->uuid,
+                    'name' => $chat->name,
                     'route' => 'chat',
                     'route-params' => ['chat' => $chat->uuid],
                     'current' => $current,
