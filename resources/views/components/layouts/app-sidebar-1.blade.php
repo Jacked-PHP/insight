@@ -10,6 +10,8 @@
 </head>
 <body class="min-h-screen h-full font-sans antialiased bg-white">
 
+@use('Illuminate\Support\Facades\Context')
+
 <div x-data="layoutsidebarone">
     <div x-cloak class="relative z-50 lg:hidden" x-show="menuShow" role="dialog" aria-modal="true">
         <div
@@ -58,7 +60,7 @@
                     <div class="flex h-16 shrink-0 items-center">
                         <img class="h-8 w-auto" src="{{ asset('imgs/ollama.png') }}" alt="Ollama Client">
                     </div>
-                    @livewire('main-menu', ['device' => 'mobile'])
+                    @livewire('main-menu', ['chat' => Context::get('chat-uuid'),'device' => 'mobile'])
                 </div>
             </div>
         </div>
@@ -71,7 +73,7 @@
             <div class="flex h-16 shrink-0 items-center">
                 <img class="h-8 w-auto" src="{{ asset('imgs/ollama.png') }}" alt="Ollama Client">
             </div>
-            @livewire('main-menu', ['device' => 'desktop'])
+            @livewire('main-menu', ['chat' => Context::get('chat-uuid'), 'device' => 'desktop'])
         </div>
     </div>
 

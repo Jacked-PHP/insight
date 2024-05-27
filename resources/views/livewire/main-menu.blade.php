@@ -20,9 +20,11 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('mainmenu', () => ({
+            chatUuid: @entangle('chatUuid'),
+
             init () {
                 window.addEventListener('chatnamesaved', (e) => {
-                    this.$wire.$refresh()
+                    this.$wire.loadChatMenu()
                 })
             },
         }))

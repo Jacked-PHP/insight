@@ -90,9 +90,9 @@
                 this.$watch('$store.chatData.chatName', (value, oldValue) => {
                     if (
                         value === oldValue
-                        || !oldValue
-                        || oldValue.trim().length() === 0
                         || value.trim().length === 0
+                        || !oldValue
+                        || (oldValue && oldValue.trim().length === 0)
                     ) return
 
                     clearTimeout(this.chatNameSaveTimeout)

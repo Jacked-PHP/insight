@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\ResourceLibrary;
 use Hook\Filter;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 
@@ -39,9 +40,7 @@ class AppServiceProvider extends ServiceProvider
             $chats = auth()->user()->chats()->latest()->limit(10)->get();
             $menu['chats'] = [];
             foreach ($chats as $chat) {
-                $route = Request::route();
-                $current = $route->named('chat')
-                    && $route->parameter('chat') === $chat->uuid;
+                $current = Context::get('chat-uuid') === $chat->uuid;
                 $menu['chats'][] = [
                     'name' => $chat->name,
                     'route' => 'chat',
