@@ -3,15 +3,13 @@
 namespace App\Http\Middlewares;
 
 use Closure;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Route;
 
 class ChatContext
 {
-    public function handle(Request $request, Closure $next): Response|JsonResponse
+    public function handle(Request $request, Closure $next)
     {
         $chat = Route::getRoutes()->match($request)->parameter('chat');
         if (null !== $chat) {
