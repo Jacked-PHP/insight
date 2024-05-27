@@ -80,6 +80,10 @@ class LlmClient extends Component
 
     public function postMessage(string $message)
     {
+        if (empty($message)) {
+            return;
+        }
+
         $chat = Chat::where('uuid', $this->chatUuid)
             ->where('user_id', $this->userId)
             ->first();

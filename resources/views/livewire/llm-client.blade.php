@@ -101,10 +101,12 @@
             },
 
             async sendMessage() {
+                const message = this.$refs.message.value
+                if (!message || message.trim().length === 0) return
+
                 this.chatAvailable = false
                 const interval = setInterval(() => this.keepScrollDown(true), 100)
 
-                const message = this.$refs.message.value
                 this.$refs.message.value = ''
                 await this.$wire.postMessage(message)
 

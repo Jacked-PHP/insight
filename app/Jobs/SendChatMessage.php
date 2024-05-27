@@ -93,57 +93,63 @@ class SendChatMessage implements ShouldQueue
         $messages = Filter::applyFilters('chat-messages', $messages, $prompt);
 
         if ('ollama' === config('llm.ai_api')) {
+            $this->chatOllama($messages, $callback);
+        } elseif ('openai' === config('llm.ai_api')) {
+            $this->chatOpenai($messages, $callback);
+        }
+    }
 
-            $response = Ollama::agent(config('ollama-laravel.agent'))
-                ->model(config('ollama-laravel.model'))
-                ->stream(config('llm.agent.stream'))
-                ->chat($messages);
+    public function chatOpenai(array $messages, callable $callback): void
+    {
+        $stream = OpenAI::chat()->createStreamed([
+            'model' => config('llm.openai-model'),
+            'messages' => $messages,
+        ]);
 
-            $body = $response->getBody();
-            $buffer = '';
-            while (!$body->eof()) {
-                $buffer .= $body->read(1);
-                if (substr($buffer, -1) !== PHP_EOL) {
-                    continue;
-                }
+        foreach ($stream as $response) {
+            if ($response->choices[0]->finishReason === 'stop') {
+                $callback('bot-finished');
+                break;
+            }
 
-                $buffer = trim($buffer);
-                if (str_starts_with($buffer, 'data:')) {
-                    $buffer = trim(str_replace('data:', '',$buffer));
-                }
-                $jsonObject = json_decode($buffer, true);
-                if (!$jsonObject) {
-                    if (config('app.debug')) {
-                        echo "Error decoding JSON: " . json_last_error_msg() . PHP_EOL;
-                        echo "Message Received: " . PHP_EOL;
-                        var_dump($buffer);
-                    }
-                    $buffer = '';
-                    continue;
+            $callback($response->choices[0]->delta->content);
+        }
+    }
+
+    public function chatOllama(array $messages, callable $callback): void
+    {
+        $response = Ollama::agent(config('ollama-laravel.agent'))
+            ->model(config('ollama-laravel.model'))
+            ->stream(config('llm.agent.stream'))
+            ->chat($messages);
+
+        $body = $response->getBody();
+        $buffer = '';
+        while (!$body->eof()) {
+            $buffer .= $body->read(1);
+            if (substr($buffer, -1) !== PHP_EOL) {
+                continue;
+            }
+
+            $buffer = trim($buffer);
+            if (str_starts_with($buffer, 'data:')) {
+                $buffer = trim(str_replace('data:', '',$buffer));
+            }
+            $jsonObject = json_decode($buffer, true);
+            if (!$jsonObject) {
+                if (config('app.debug')) {
+                    echo "Error decoding JSON: " . json_last_error_msg() . PHP_EOL;
+                    echo "Message Received: " . PHP_EOL;
+                    var_dump($buffer);
                 }
                 $buffer = '';
-
-                $callback(Arr::get($jsonObject, 'message.content', ''));
+                continue;
             }
+            $buffer = '';
 
-            $callback('bot-finished');
-
-        } elseif ('openai' === config('llm.ai_api')) {
-
-            $stream = OpenAI::chat()->createStreamed([
-                'model' => config('llm.openai-model'),
-                'messages' => $messages,
-            ]);
-
-            foreach ($stream as $response) {
-                if ($response->choices[0]->finishReason === 'stop') {
-                    $callback('bot-finished');
-                    break;
-                }
-
-                $callback($response->choices[0]->delta->content);
-            }
-
+            $callback(Arr::get($jsonObject, 'message.content', ''));
         }
+
+        $callback('bot-finished');
     }
 }
