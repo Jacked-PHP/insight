@@ -94,4 +94,13 @@ This application uses the following embedding solution:
 
 - ollama embedding model: [mxbai-embed-large](https://ollama.com/library/mxbai-embed-large)
 
+## Ollama details
+
+To run Ollama, a suggested way would be to run through docker:
+
+```shell
+docker run -d -v ollama:$HOME/.ollama -p 11434:11434 --name ollama ollama/ollama
+```
+
+> Reference: https://github.com/ollama/ollama/blob/main/docs/docker.md
 
