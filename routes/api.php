@@ -21,12 +21,16 @@ Route::get('/stream-endpoint/{chatUuid}/{messageUuid}/{responseUuid}', function 
             messageRecord: $messageRecord,
             responseRecord: $responseRecord,
         ))->handle(callback: function (string $chunk) {
-            echo $chunk;
+            echo "data: " . $chunk . "\n\n";
             ob_flush();
             flush();
         });
     });
 
     $response->headers->set('Transfer-Encoding', 'chunked');
+    $response->headers->set('Content-Type', 'text/event-stream');
+    $response->headers->set('Cache-Control', 'no-cache');
+    $response->headers->set('Connection', 'keep-alive');
+    $response->headers->set('X-Accel-Buffering', 'no');
     $response->send();
 })->middleware('web');

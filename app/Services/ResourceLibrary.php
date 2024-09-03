@@ -7,6 +7,7 @@ use Cloudstudio\Ollama\Facades\Ollama;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Origin\Text\Text;
 
 class ResourceLibrary
 {
@@ -28,7 +29,9 @@ class ResourceLibrary
 
     public function indexDocument(string $content): Collection
     {
-       return collect(explode(PHP_EOL, $content))
+       return collect(Text::tokenize($content,[
+           'separator' => PHP_EOL,
+       ]))
            ->filter(fn (string $line) => !empty(trim($line)))
            ->map(fn (string $line) => $this->indexToken($line));
     }

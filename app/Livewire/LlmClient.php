@@ -6,7 +6,6 @@ use App\Enums\MessageType;
 use App\Models\Chat;
 use App\Models\Message;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Ramsey\Uuid\Uuid;
 

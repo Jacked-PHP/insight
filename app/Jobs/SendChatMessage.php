@@ -39,18 +39,19 @@ class SendChatMessage implements ShouldQueue
     public function handle(?callable $callback = null): void
     {
         $finalMessage = '';
+
         $this->chat($this->messageRecord->content, function ($response) use ($callback, &$finalMessage) {
             if ('bot-finished' !== $response) {
                 $finalMessage .= $response;
 
                 if (config('llm.agent.stream')) {
                     if ($callback !== null) {
-                        $callback($response);
+                        $callback($finalMessage);
                     } else {
                         event(new ChatMessageEventStream(
                             userId: null,
                             messageUuuid: $this->messageRecord->uuid,
-                            message: $response,
+                            message: $finalMessage,
                             channel: 'chat-channel.' . $this->userId
                         ));
                     }

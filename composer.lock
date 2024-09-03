@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d04082b66a8d6e89402a4d1d9934bb5e",
+    "content-hash": "d34858e354f68d1f9790f5cbe6833fb2",
     "packages": [
         {
             "name": "adoy/fastcgi-client",
@@ -4566,6 +4566,58 @@
                 }
             ],
             "time": "2023-12-05T14:08:09+00:00"
+        },
+        {
+            "name": "originphp/text",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/originphp/text.git",
+                "reference": "fd2a9bd69814a362d6fde9df9d5baf6c4614be0b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/originphp/text/zipball/fd2a9bd69814a362d6fde9df9d5baf6c4614be0b",
+                "reference": "fd2a9bd69814a362d6fde9df9d5baf6c4614be0b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.12.64",
+                "phpunit/phpunit": "^9.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Origin\\Text\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jamiel Sharief",
+                    "email": "js@originphp.com"
+                }
+            ],
+            "description": "OriginPHP Text",
+            "homepage": "https://www.originphp.com",
+            "keywords": [
+                "merge",
+                "originPHP",
+                "string",
+                "text",
+                "tokenzie"
+            ],
+            "support": {
+                "issues": "https://github.com/originphp/text/issues",
+                "source": "https://github.com/originphp/text/tree/2.1.0"
+            },
+            "time": "2021-01-19T09:21:26+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -9333,53 +9385,6 @@
             "time": "2024-03-20T20:09:31+00:00"
         },
         {
-            "name": "lotharthesavior/hot-reactor",
-            "version": "0.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/lotharthesavior/hot-reactor.git",
-                "reference": "9f7f5e858b6ac5a4ac46483507cafc43ce263a65"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lotharthesavior/hot-reactor/zipball/9f7f5e858b6ac5a4ac46483507cafc43ce263a65",
-                "reference": "9f7f5e858b6ac5a4ac46483507cafc43ce263a65",
-                "shasum": ""
-            },
-            "require": {
-                "ext-inotify": "*",
-                "ext-openswoole": "^22.1",
-                "openswoole/ide-helper": "^22.1",
-                "symfony/console": "^7.0",
-                "symfony/event-dispatcher": "^7.0",
-                "vlucas/phpdotenv": "^5.6"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.54",
-                "phpro/grumphp": "^2.5",
-                "squizlabs/php_codesniffer": "^3.9"
-            },
-            "bin": [
-                "hot-reactor"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "HotReactor\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Hot Reload Tool.",
-            "support": {
-                "issues": "https://github.com/lotharthesavior/hot-reactor/issues",
-                "source": "https://github.com/lotharthesavior/hot-reactor/tree/0.0.4"
-            },
-            "time": "2024-05-04T15:20:07+00:00"
-        },
-        {
             "name": "mockery/mockery",
             "version": "1.6.12",
             "source": {
@@ -9617,45 +9622,6 @@
                 }
             ],
             "time": "2024-03-06T16:20:09+00:00"
-        },
-        {
-            "name": "openswoole/ide-helper",
-            "version": "22.1.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/openswoole/ide-helper.git",
-                "reference": "8c4de5fda9fec1b00c549a9f688163733199e712"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/openswoole/ide-helper/zipball/8c4de5fda9fec1b00c549a9f688163733199e712",
-                "reference": "8c4de5fda9fec1b00c549a9f688163733199e712",
-                "shasum": ""
-            },
-            "require": {
-                "ext-openswoole": ">=22.0",
-                "php": ">=7.4"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.6"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "OpenSwoole Group",
-                    "email": "hello@openswoole.com"
-                }
-            ],
-            "description": "IDE helper for OpenSwoole.",
-            "support": {
-                "issues": "https://github.com/openswoole/ide-helper/issues",
-                "source": "https://github.com/openswoole/ide-helper/tree/22.1.5"
-            },
-            "time": "2023-12-10T18:56:30+00:00"
         },
         {
             "name": "phar-io/manifest",

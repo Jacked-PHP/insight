@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Library;
 use App\Livewire\LoginForm;
 use App\Livewire\LlmClient;
 use App\Livewire\RegisterForm;
@@ -51,3 +52,11 @@ Route::get('register', RegisterForm::class)->name('register');
 Route::get('/chat/{chat}', LlmClient::class)
     ->middleware('auth:sanctum')
     ->name('chat');
+
+// =============================================================================
+// Library
+// =============================================================================
+
+Route::get('/library', Library::class)
+    ->middleware('auth:sanctum')
+    ->name('library');

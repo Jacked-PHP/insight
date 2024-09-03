@@ -19,7 +19,7 @@
                         </div>
                         <time datetime="{{ Arr::get($message, 'timestamp', '') }}" class="flex-none py-0.5 text-xs leading-5 text-gray-500"></time>
                     </div>
-                    <p class="text-md leading-6 text-gray-800 message-item-{{ Arr::get($message, 'type') }}" id="{{ Arr::get($message, 'uuid') }}">{{ Arr::get($message, 'message', '') }}</p>
+                    <p class="text-md leading-6 text-gray-800 message-item message-item-{{ Arr::get($message, 'type') }}" id="{{ Arr::get($message, 'uuid') }}">{{ Arr::get($message, 'message', '') }}</p>
                 </div>
             </li>
         @endforeach
@@ -94,6 +94,11 @@
                     this.chatAvailable = true
                     this.$refs.message.focus()
                 })
+
+                const messages = document.getElementsByClassName('message-item')
+                for (let i = 0; i < messages.length; i++) {
+                    messages[i].innerHTML = window.marked.parse(messages[i].textContent)
+                }
             },
 
             toggleMessageMenu() {
@@ -124,9 +129,13 @@
                         function read() {
                             reader.read().then(({ done, value }) => {
                                 if (done) return
-                                const text = decoder.decode(value, { stream: true })
-                                responseDom.append(text)
-                                read()
+                                const text = decoder.decode(value, { stream: true });
+                                const lines = text.split(/(?:^data: |\n\ndata: )/g);
+                                lines.forEach(line => {
+                                    const eventData = line.substring(6).trim();
+                                    responseDom.innerHTML = window.marked.parse(eventData);
+                                });
+                                read();
                             });
                         }
 
