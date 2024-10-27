@@ -132,7 +132,7 @@
                                 const text = decoder.decode(value, { stream: true });
                                 const lines = text.split(/(?:^data: |\n\ndata: )/g);
                                 lines.forEach(line => {
-                                    const eventData = line.substring(6).trim();
+                                    const eventData = line.trim();
                                     responseDom.innerHTML = window.marked.parse(eventData);
                                 });
                                 read();
