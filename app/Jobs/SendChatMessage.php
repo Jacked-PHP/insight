@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\ChatMessageEvent;
 use App\Events\ChatMessageEventStream;
 use App\Models\Chat;
 use App\Models\Message;
@@ -44,22 +43,13 @@ class SendChatMessage implements ShouldQueue
             if ('bot-finished' !== $response) {
                 $finalMessage .= $response;
 
-                if (config('llm.agent.stream')) {
-                    if ($callback !== null) {
-                        $callback($finalMessage);
-                    } else {
-                        event(new ChatMessageEventStream(
-                            userId: null,
-                            messageUuuid: $this->messageRecord->uuid,
-                            message: $finalMessage,
-                            channel: 'chat-channel.' . $this->userId
-                        ));
-                    }
+                if ($callback !== null) {
+                    $callback($finalMessage);
                 } else {
-                    event(new ChatMessageEvent(
+                    event(new ChatMessageEventStream(
                         userId: null,
                         messageUuuid: $this->messageRecord->uuid,
-                        message: $response,
+                        message: $finalMessage,
                         channel: 'chat-channel.' . $this->userId
                     ));
                 }
@@ -121,7 +111,7 @@ class SendChatMessage implements ShouldQueue
     {
         $response = Ollama::agent(config('ollama-laravel.agent'))
             ->model(config('ollama-laravel.model'))
-            ->stream(config('llm.agent.stream'))
+            ->stream(true)
             ->chat($messages);
 
         $body = $response->getBody();

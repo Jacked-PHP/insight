@@ -22,7 +22,7 @@ class LlmClient extends Component
     public string $response;
     public string $chatName;
 
-    public function mount(string $chat)
+    public function mount(string $chat): void
     {
         $this->chatUuid = $chat;
         $chat = auth()->user()->chats()->where('uuid', $this->chatUuid)->first();
@@ -55,7 +55,7 @@ class LlmClient extends Component
         $this->chatName = $chat->name;
     }
 
-    public function loadMessages(?Chat $chat = null)
+    public function loadMessages(?Chat $chat = null): void
     {
         $chat = $chat ?? auth()->user()->chats()->where('uuid', $this->chatUuid)->first();
         $this->messages = $chat->messages->map([$this, 'formatMessage'])->toArray();
@@ -77,7 +77,7 @@ class LlmClient extends Component
         ];
     }
 
-    public function postMessage(string $message)
+    public function postMessage(string $message): void
     {
         if (empty($message)) {
             return;

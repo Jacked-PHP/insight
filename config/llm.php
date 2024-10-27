@@ -10,12 +10,6 @@ return [
         // 'OpenAI-Beta' => 'assistants=v1',
     ],
 
-    // agent
-
-    'agent' => [
-        'stream' => env('LLM_AGENT_STREAM', true),
-    ],
-
     // embedding
 
     'embedding' => [

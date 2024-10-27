@@ -7,7 +7,6 @@
     "require": {
         "php": "^8.2",
         "cloudstudio/ollama-laravel": "^1.0",
-        "jacked-php/jacked-server": "^0.1",
         "kanata-php/conveyor-laravel-broadcaster": "^0.1",
         "kanata-php/socket-conveyor": "^2.2",
         "laravel/framework": "^11.0",

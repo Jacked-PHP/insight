@@ -66,7 +66,7 @@ Make sure your `.env` is properly set:
 
 - have db credentials
 - app key (`php artisan key:generate`)
-- app url (default is `http://localhost:8080`)
+- app url (default is `http://localhost:8000`)
 
 Then run the migrations:
 
@@ -77,10 +77,10 @@ php artisan migrate
 Run the server (this is running jacked server):
 
 ```bash
-php artisan jacked:serve
+php artisan serve
 ```
 
-Now you can visit `http://localhost:8080` and see the application running.
+Now you can visit `http://localhost:8000` and see the application running.
 
 ## Vector DB
 
