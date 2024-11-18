@@ -3,8 +3,6 @@
 
 RAG - Retrieval Augmented Generation. This is the Jacked initiative for that within the PHP ecosystem.
 
-> This solution streams back the text chunks of the response coming from the LLM. There is a WebSocket experiment that accomplishes the same in the branch [websocket-experiment](https://github.com/Jacked-PHP/insight/tree/websocket-experiment).
-
 ## Usage
 
 Sample credentials:

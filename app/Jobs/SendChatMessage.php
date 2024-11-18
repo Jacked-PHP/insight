@@ -6,6 +6,7 @@ use App\Events\ChatMessageEventStream;
 use App\Models\Chat;
 use App\Models\Message;
 use Cloudstudio\Ollama\Facades\Ollama;
+use Exception;
 use Hook\Filter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -109,10 +110,23 @@ class SendChatMessage implements ShouldQueue
 
     public function chatOllama(array $messages, callable $callback): void
     {
-        $response = Ollama::agent(config('ollama-laravel.agent'))
-            ->model(config('ollama-laravel.model'))
-            ->stream(true)
-            ->chat($messages);
+        try {
+            $response = Ollama::agent(config('ollama-laravel.agent'))
+                ->model(config('ollama-laravel.model'))
+                ->stream(true)
+                ->chat($messages);
+        } catch (Exception $e) {
+            $callback($e->getMessage());
+            $callback('bot-finished');
+            return;
+        }
+
+        $status = $response->getStatusCode();
+        if ($status !== 200) {
+            $callback("Failed to reach Ollama Server. Status: $status");
+            $callback('bot-finished');
+            return;
+        }
 
         $body = $response->getBody();
         $buffer = '';
