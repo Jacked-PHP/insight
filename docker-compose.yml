@@ -15,6 +15,19 @@ services:
     networks:
       - insightnetwork
 
+  php:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile-php4
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '8080:8080'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - insightnetwork
+
 networks:
   insightnetwork:
     driver: bridge

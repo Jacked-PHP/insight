@@ -31,4 +31,8 @@ return [
         ],
     ],
 
+    'tika' => [
+        'url' => env('TIKA_URL'),
+        'path' => env('TIKA_PATH'),
+    ],
 ];

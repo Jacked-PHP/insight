@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
+use Vaites\ApacheTika\Client;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,7 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-
+        $this->app->bind(Client::class, function () {
+            return Client::make(config('services.tika.path'));
+        });
     }
 
     /**

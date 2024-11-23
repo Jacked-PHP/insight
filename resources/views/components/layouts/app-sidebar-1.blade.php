@@ -101,12 +101,28 @@
             </div>
         </main>
     </div>
+
+    @include('components.layouts.parts.notifications')
 </div>
 <script type="text/javascript">
     document.addEventListener('alpine:init', () => {
         Alpine.data('layoutsidebarone', () => ({
             menuShow: false,
             userMenuShow: false,
+
+            displayNotification: false,
+            notificationMessage: '',
+            notificationType: 'success', // TODO: implement this
+
+            init() {
+                document.addEventListener('notify', (e) => {
+                    this.notificationMessage = e.detail.message;
+                    this.displayNotification = true;
+                    setTimeout(() => {
+                        this.displayNotification = false
+                    }, 5000);
+                });
+            },
 
             toggleMenu() {
                 this.menuShow = !this.menuShow

@@ -20,6 +20,9 @@ Before start you need to make sure you have the following dependencies:
 - php8.2 or higher
 - php openswoole extension
 - docker (for postgres db)
+- For OCR: (for pdf and images, due to Tika lib)
+  - `sudo apt-get install tesseract-ocr`)
+  - Java JDK 8
 
 ### Step 1
 

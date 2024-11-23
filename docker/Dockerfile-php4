@@ -1,0 +1,19 @@
+FROM serversideup/php:8.4-fpm-nginx-alpine
+USER root
+WORKDIR /var/www/html
+RUN install-php-extensions intl bcmath gd
+
+RUN apk update && apk add vim bash
+
+# Copying manually to reduce the size the max we can.
+#COPY . /var/www/html/
+
+# env
+# COPY ../.env.qa-pipeline /var/www/html/.env
+
+# RUN composer install --no-scripts
+# RUN chown -R www-data:www-data /var/www/html
+
+USER www-data
+
+EXPOSE 8080
