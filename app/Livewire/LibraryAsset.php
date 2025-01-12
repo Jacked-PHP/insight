@@ -2,11 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Data\PdfTextExtractData;
-use App\Enums\AssetType;
 use App\Enums\Meta\AssetMetadata;
 use App\Models\Asset;
-use App\Services\PdfService;
+use App\Services\ResourceLibrary;
 use Livewire\Component;
 
 class LibraryAsset extends Component
@@ -18,32 +16,17 @@ class LibraryAsset extends Component
         $this->assetId = request()->asset;
     }
 
-    public function extractContent()
+    public function indexDocument()
     {
-        $asset = Asset::find($this->assetId);
-        $path = storage_path('app/public/' . $asset->path);
+        app(ResourceLibrary::class)->indexDocumentByPath(storage_path('app/public/library'));
 
-        if ($asset->type === AssetType::PDF) {
-            /** @var PdfTextExtractData $content */
-            $extractionData = app(PdfService::class)->extractText($path);
-            $asset->setMeta(AssetMetadata::CONTENT->value, $extractionData->text);
-            $asset->setMeta(AssetMetadata::PDF_DATA->value, json_encode([
-                'pages' => $extractionData->pages,
-                'metadata' => $extractionData->metadata,
-            ]));
-        } elseif ($asset->type === AssetType::TEXT) {
-            $asset->setMeta(AssetMetadata::CONTENT->value, file_get_contents($path));
-        }
-
-        $this->dispatch('error', 'Unsupported file type');
+        $this->dispatch('success', 'Document indexed successfully!');
     }
 
     public function render()
     {
         $asset = Asset::find($this->assetId);
         $pages = json_decode($asset->getMeta(AssetMetadata::PDF_DATA->value));
-        // $path = storage_path('app/public/' . $asset->path);
-        // app(PdfService::class)->getMetadata($path);
 
         return view('livewire.library-asset', [
             'asset' => $asset,

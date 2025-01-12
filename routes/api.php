@@ -22,7 +22,6 @@ Route::get('/stream-endpoint/{chatUuid}/{messageUuid}/{responseUuid}', function 
             responseRecord: $responseRecord,
         ))->handle(callback: function (string $chunk) {
             echo "data: " . $chunk . "\n\n";
-            ob_flush();
             flush();
         });
     });

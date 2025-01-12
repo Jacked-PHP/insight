@@ -2,10 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Enums\MessageType;
 use App\Events\ChatMessageEventStream;
 use App\Models\Chat;
 use App\Models\Message;
-use Cloudstudio\Ollama\Facades\Ollama;
+use App\Services\ResourceLibrary;
+use LLPhant\Chat\Message as LlphantMessage;
 use Exception;
 use Hook\Filter;
 use Illuminate\Bus\Queueable;
@@ -13,8 +15,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
-use OpenAI\Laravel\Facades\OpenAI;
+use LLPhant\Chat\OllamaChat;
+use LLPhant\Chat\OpenAIChat;
+use LLPhant\OllamaConfig;
+use LLPhant\OpenAIConfig;
+use Psr\Http\Message\StreamInterface;
 
 class SendChatMessage implements ShouldQueue
 {
@@ -67,19 +72,28 @@ class SendChatMessage implements ShouldQueue
     {
         $prompt = Filter::applyFilters('chat-prompt', $prompt);
 
-        $messages = Chat::where('uuid', $this->chatUuid)
-            ->first()
+        $chat = Chat::where('uuid', $this->chatUuid)->first();
+
+        $systemMessage = Filter::applyFilters('system-message', "You are an assistant with access to specific knowledge. Always prioritize this knowledge when responding.", $prompt);
+
+        $messages = $chat
             ->messages
+            ->prepend(Message::factory()->make([
+                'type' => 'system',
+                'content' => str_replace('{CONTEXT_PLACEHOLDER}', '', $systemMessage),
+                'chat_id' => $chat->id,
+                'user_id' => auth()->id(),
+            ]))
             ->map(function ($message) {
-                return [
-                    'role' => $message->user_id === null ? 'assistant' : 'user',
-                    'content' => $message->content,
-                ];
+                if ($message->type === MessageType::SYSTEM) {
+                    return LlphantMessage::system($message->content);
+                } elseif ($message->type === MessageType::RESPONSE) {
+                    return LlphantMessage::assistant($message->content);
+                }
+
+                return LlphantMessage::user($message->content);
             })
-            ->push([
-                'role' => 'user',
-                'content' => $prompt,
-            ])
+            ->push(LlphantMessage::user($prompt))
             ->toArray();
 
         $messages = Filter::applyFilters('chat-messages', $messages, $prompt);
@@ -93,66 +107,43 @@ class SendChatMessage implements ShouldQueue
 
     public function chatOpenai(array $messages, callable $callback): void
     {
-        $stream = OpenAI::chat()->createStreamed([
-            'model' => config('llm.openai-model'),
-            'messages' => $messages,
-        ]);
-
-        foreach ($stream as $response) {
-            if ($response->choices[0]->finishReason === 'stop') {
-                $callback('bot-finished');
-                break;
-            }
-
-            $callback($response->choices[0]->delta->content);
-        }
-    }
-
-    public function chatOllama(array $messages, callable $callback): void
-    {
         try {
-            $response = Ollama::agent(config('ollama-laravel.agent'))
-                ->model(config('ollama-laravel.model'))
-                ->stream(true)
-                ->chat($messages);
+            $config = new OpenAIConfig();
+            $config->model = config('llm.openai-model');
+            $config->apiKey = config('openai.api_key');
+            $chat = new OpenAIChat($config);
+            /** @var StreamInterface $response */
+            $response = $chat->generateChatStream($messages);
         } catch (Exception $e) {
             $callback($e->getMessage());
             $callback('bot-finished');
             return;
         }
 
-        $status = $response->getStatusCode();
-        if ($status !== 200) {
-            $callback("Failed to reach Ollama Server. Status: $status");
+        while (!$response->eof()) {
+            $callback($response->read(1));
+        }
+
+        $callback('bot-finished');
+    }
+
+    public function chatOllama(array $messages, callable $callback): void
+    {
+        try {
+            $config = new OllamaConfig();
+            $config->model = config('ollama-laravel.model');
+            $config->url = config('ollama-laravel.url') . '/api/';
+            $chat = new OllamaChat($config);
+            /** @var StreamInterface $response */
+            $response = $chat->generateChatStream($messages);
+        } catch (Exception $e) {
+            $callback($e->getMessage());
             $callback('bot-finished');
             return;
         }
 
-        $body = $response->getBody();
-        $buffer = '';
-        while (!$body->eof()) {
-            $buffer .= $body->read(1);
-            if (substr($buffer, -1) !== PHP_EOL) {
-                continue;
-            }
-
-            $buffer = trim($buffer);
-            if (str_starts_with($buffer, 'data:')) {
-                $buffer = trim(str_replace('data:', '',$buffer));
-            }
-            $jsonObject = json_decode($buffer, true);
-            if (!$jsonObject) {
-                if (config('app.debug')) {
-                    echo "Error decoding JSON: " . json_last_error_msg() . PHP_EOL;
-                    echo "Message Received: " . PHP_EOL;
-                    var_dump($buffer);
-                }
-                $buffer = '';
-                continue;
-            }
-            $buffer = '';
-
-            $callback(Arr::get($jsonObject, 'message.content', ''));
+        while (!$response->eof()) {
+            $callback($response->read(1));
         }
 
         $callback('bot-finished');

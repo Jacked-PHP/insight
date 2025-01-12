@@ -6,6 +6,7 @@ use App\Livewire\LoginForm;
 use App\Livewire\LlmClient;
 use App\Livewire\RegisterForm;
 use App\Livewire\RemoteLibrary;
+use App\Livewire\Vault;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Ramsey\Uuid\Uuid;
@@ -22,7 +23,7 @@ use Ramsey\Uuid\Uuid;
 */
 
 Route::get('/', function () {
-    return redirect(route('library'));
+    return redirect(route('remote-library'));
 })
     ->name('home')
     ->middleware('auth:sanctum');
@@ -46,7 +47,11 @@ Route::get('create-chat', function () {
 // Auth
 // =============================================================================
 
-Route::get('login', LoginForm::class)->name('login');
+// Route::get('login', LoginForm::class)->name('login');
+Route::get('login', function() {
+    auth()->loginUsingId(1);
+    return redirect(route('home'));
+})->name('login');
 Route::get('logout', function () {
     Auth::logout();
     return redirect(route('login'));
@@ -68,6 +73,9 @@ Route::get('/chat/{chat}', LlmClient::class)
 Route::get('/remote-library', RemoteLibrary::class)
     ->middleware('auth:sanctum')
     ->name('remote-library');
+Route::get('/vault/{vault}', Vault::class)
+    ->middleware('auth:sanctum')
+    ->name('vault');
 
 // =============================================================================
 // Library

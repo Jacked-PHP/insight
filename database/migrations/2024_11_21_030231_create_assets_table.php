@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('name');
-            $table->string('path');
+            $table->string('path')->unique();
             $table->string('type');
             $table->integer('size');
+            $table->foreignId('vault_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

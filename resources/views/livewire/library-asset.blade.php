@@ -14,12 +14,12 @@
     <div>
         <div class="flex gap-2 items-center">
             <button
-                wire:click="extractContent()"
+                wire:click="indexDocument()"
                 type="button"
                 class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 wire:loading.attr="disabled"
                 wire:loading.class="opacity-50 cursor-not-allowed"
-            >Extract Content</button>
+            >Index Content</button>
             <div wire:loading>
                 Extracting Data...
             </div>
@@ -82,6 +82,50 @@
             contentOpened: false,
             pageOpened: false,
             tab: 'content',
+
+            init() {
+                let $this = this;
+
+                // listen to livewire event and dispatch notify
+                window.addEventListener('success', (event) => {
+                    $this.$dispatch('notify', {
+                        message: event.detail.message,
+                        type: 'success',
+                    });
+                });
+
+                window.addEventListener('error', (event) => {
+                    $this.$dispatch('notify', {
+                        message: event.detail.message,
+                        type: 'error',
+                    });
+                });
+
+                // TODO: @deprecated
+                // Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
+                //     $this.$dispatch('notify', {
+                //         message: 'Content extraction requested',
+                //         type: 'success',
+                //     });
+                // });
+
+                // TODO: @deprecated
+                // Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
+                //     $this.$dispatch('notify', {
+                //         message: 'Content extraction requested',
+                //         type: 'success',
+                //     });
+                // });
+
+                // TODO: @deprecated
+                // Native.on("App\\Events\\DocumentContentExtracted", () => {
+                //     $this.$dispatch('notify', {
+                //         message: 'Content extraction finished',
+                //         type: 'success',
+                //     });
+                //     window.location.reload();
+                // });
+            }
         }));
     });
 </script>

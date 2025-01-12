@@ -78,7 +78,7 @@
     </div>
 
     <!-- Top Menu -->
-    <div class="lg:pl-72">
+    <div class="lg:pl-72" x-cloak>
         <div class="sticky top-0 z-40 lg:mx-auto lg:max-w-7xl lg:px-8">
             <div class="flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
                 <button @click="toggleMenu()" type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
@@ -110,6 +110,7 @@
             menuShow: false,
             userMenuShow: false,
 
+            notificationTimeout: null,
             displayNotification: false,
             notificationMessage: '',
             notificationType: 'success', // TODO: implement this
@@ -118,7 +119,8 @@
                 document.addEventListener('notify', (e) => {
                     this.notificationMessage = e.detail.message;
                     this.displayNotification = true;
-                    setTimeout(() => {
+                    if (this.notificationTimeout) clearTimeout(this.notificationTimeout);
+                    this.notificationTimeout = setTimeout(() => {
                         this.displayNotification = false
                     }, 5000);
                 });

@@ -23,5 +23,4 @@ return [
 
     'openai-model' => env('LLM_MODEL', 'gpt-4'),
     'organization' => env('OPENAI_ORGANIZATION'),
-
 ];
