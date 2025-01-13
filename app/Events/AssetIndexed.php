@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Asset;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -27,5 +28,10 @@ class AssetIndexed
         return [
             new Channel('nativephp'),
         ];
+    }
+
+    public function getAsset(): Asset
+    {
+        return Asset::query()->findOrFail($this->assetId);
     }
 }

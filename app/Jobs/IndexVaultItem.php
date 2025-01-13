@@ -20,19 +20,14 @@ class IndexVaultItem implements ShouldQueue
     {
         $asset = Asset::query()
             ->where('id', $this->assetId)
-            ->notEmbedded()
+            ->notIndexed()
             ->first();
 
         if ($asset === null) {
             return;
         }
 
-        $asset->embedding_id = app(ResourceLibrary::class)
-            ->indexDocumentByPath($asset->path)
-            ->first()
-            ->id; // always returns a collection of one.
-
-        $asset->save();
+        app(ResourceLibrary::class)->indexDocumentByPath($asset->path);
 
         event(new AssetIndexed(
             assetId: $asset->id,

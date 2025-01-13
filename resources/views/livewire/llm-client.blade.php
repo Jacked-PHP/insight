@@ -25,23 +25,41 @@
         @endforeach
     </ul>
 
+    <div x-show="loadingMessage">Loading...</div>
+
     <!-- Input -->
-    <div class="mt-6 flex gap-x-3 flex-grow-0">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 flex-none rounded-full bg-gray-50">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-        </svg>
+    <div class="flex flex-col">
+        <div class="mt-6 flex gap-x-3 flex-grow-0">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 flex-none rounded-full bg-gray-50">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
 
-        <div action="#" class="relative flex-grow flex">
-            <div class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-blue-600 flex-grow">
-                <label for="comment" class="sr-only">Add your comment</label>
-                <textarea @keydown.enter="if (!event.shiftKey) { sendMessage(); event.preventDefault(); }" @input="event.target.style.height = 'auto'; event.target.style.height = event.target.scrollHeight + 'px';" rows="1" name="comment" x-ref="message" class="block w-full resize-none border-0 py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 bg-transparent overflow-hidden" placeholder="Add your message..." :readonly="!chatAvailable"></textarea>
-            </div>
+            <div action="#" class="relative flex-grow flex">
+                <div class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-blue-600 flex-grow">
+                    <label for="comment" class="sr-only">Add your comment</label>
+                    <textarea @keydown.enter="if (!event.shiftKey) { sendMessage(); event.preventDefault(); }" @input="event.target.style.height = 'auto'; event.target.style.height = event.target.scrollHeight + 'px';" rows="1" name="comment" x-ref="message" class="block w-full resize-none border-0 py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 bg-transparent overflow-hidden" placeholder="Add your message..." :readonly="!chatAvailable"></textarea>
+                </div>
 
-            <div class="inset-x-0 bottom-0 flex flex-grow-0 justify-between py-2 pl-3 pr-2">
-                <button @click="sendMessage()" type="button" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                    Send <span class="text-gray-400 text-xs">[Enter]</span>
-                </button>
+                <div class="inset-x-0 bottom-0 flex flex-grow-0 justify-between py-2 pl-3 pr-2">
+                    <button @click="sendMessage()" type="button" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                        Send <span class="text-gray-400 text-xs">[Enter]</span>
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <div class="mt-4 flex gap-4 items-center">
+            <span>Vault:</span>
+            @if (count($messages) === 0)
+                <select wire:model="vaultId" class="rounded border border-gray-300 px-2 py-1 pr-8 truncate">
+                    <option>None</option>
+                    @foreach($vaults as $vault)
+                        <option value="{{ Arr::get($vault, 'id') }}">{{ Arr::get($vault, 'path') }}</option>
+                    @endforeach
+                </select>
+            @else
+                <span>{{ $vaultPath ?? '-' }}</span>
+            @endif
         </div>
     </div>
 </div>
@@ -77,6 +95,7 @@
             chatAvailable: false,
             userId: null,
             chatUuid: '{{ $chatUuid }}',
+            loadingMessage: false,
 
             /**
              * @type {Array.<participantTemplate>}
@@ -106,6 +125,8 @@
             },
 
             async sendMessage() {
+                this.loadingMessage = true;
+
                 const message = this.$refs.message.value
                 if (!message || message.trim().length === 0) return
 
@@ -148,6 +169,7 @@
                         clearInterval(interval)
                         this.chatAvailable = true
                         this.$refs.message.focus()
+                        this.loadingMessage = false;
                     });
             },
 

@@ -102,29 +102,29 @@
                 });
 
                 // TODO: @deprecated
-                // Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
-                //     $this.$dispatch('notify', {
-                //         message: 'Content extraction requested',
-                //         type: 'success',
-                //     });
-                // });
+                Native && Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
+                    $this.$dispatch('notify', {
+                        message: 'Content extraction requested',
+                        type: 'success',
+                    });
+                });
 
                 // TODO: @deprecated
-                // Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
-                //     $this.$dispatch('notify', {
-                //         message: 'Content extraction requested',
-                //         type: 'success',
-                //     });
-                // });
+                Native && Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
+                    $this.$dispatch('notify', {
+                        message: 'Content extraction requested',
+                        type: 'success',
+                    });
+                });
 
                 // TODO: @deprecated
-                // Native.on("App\\Events\\DocumentContentExtracted", () => {
-                //     $this.$dispatch('notify', {
-                //         message: 'Content extraction finished',
-                //         type: 'success',
-                //     });
-                //     window.location.reload();
-                // });
+                Native && Native.on("App\\Events\\DocumentContentExtracted", () => {
+                    $this.$dispatch('notify', {
+                        message: 'Content extraction finished',
+                        type: 'success',
+                    });
+                    window.location.reload();
+                });
             }
         }));
     });

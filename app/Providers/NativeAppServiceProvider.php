@@ -18,11 +18,11 @@ class NativeAppServiceProvider implements ProvidesPhpIni
             ->width(1400)
             ->height(800);
 
-        ChildProcess::start(
-            cmd: ['sh', '-c', 'cd ' . base_path() . ' && docker compose up postgres'],
-            alias: 'postgres',
-            persistent: true
-        );
+        // ChildProcess::start(
+        //     cmd: ['sh', '-c', 'cd ' . base_path() . ' && docker compose up postgres'],
+        //     alias: 'postgres',
+        //     persistent: true
+        // );
 
         // TODO: make this flexible by OS
         // Important: php-custom-bin/bin/linux/x64/php-8.3

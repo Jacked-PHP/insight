@@ -21,6 +21,7 @@ class LlmClient extends Component
     public array $messages;
     public string $response;
     public string $chatName;
+    public ?int $vaultId = null;
 
     public function mount(string $chat): void
     {
@@ -53,6 +54,7 @@ class LlmClient extends Component
         $this->port = config('jacked-server.ssl-enabled') ? config('jacked-server.ssl-port') : config('jacked-server.port');
         $this->channel = 'private-chat-channel.' . $user->id;
         $this->chatName = $chat->name;
+        $this->vaultId = $chat->vault_id;
     }
 
     public function loadMessages(?Chat $chat = null): void
@@ -83,9 +85,15 @@ class LlmClient extends Component
             return;
         }
 
-        $chat = Chat::where('uuid', $this->chatUuid)
-            ->where('user_id', $this->userId)
+        $chat = auth()->user()
+            ->chats()
+            ->where('uuid', $this->chatUuid)
             ->first();
+
+        if ($chat->vault_id === null && $chat->messages()->count() === 0) {
+            $chat->vault_id = $this->vaultId;
+            $chat->save();
+        }
 
         $messageRecord = $chat->messages()->create([
             'uuid' => Uuid::uuid4()->toString(),
@@ -107,8 +115,25 @@ class LlmClient extends Component
 
     public function render()
     {
+        $chat = auth()->user()
+            ->chats()
+            ->where('uuid', $this->chatUuid)
+            ->first();
+
+        $vaults = [];
+        if ($chat->messages()->count() === 0) {
+            $vaults = auth()
+                ->user()
+                ->vaults()
+                ->select('id', 'path')
+                ->get()
+                ->toArray();
+        }
+
         return view('livewire.llm-client', [
             'messages' => $this->messages,
+            'vaults' => $vaults,
+            'vaultPath' => auth()->user()->vaults()->find($this->vaultId)?->path ?? null,
         ]);
     }
 }

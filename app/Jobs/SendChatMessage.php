@@ -74,7 +74,7 @@ class SendChatMessage implements ShouldQueue
 
         $chat = Chat::where('uuid', $this->chatUuid)->first();
 
-        $systemMessage = Filter::applyFilters('system-message', "You are an assistant with access to specific knowledge. Always prioritize this knowledge when responding.", $prompt);
+        $systemMessage = Filter::applyFilters('system-message', "You are an assistant with access to specific knowledge. Always prioritize the context when responding.", $prompt);
 
         $messages = $chat
             ->messages
@@ -97,6 +97,7 @@ class SendChatMessage implements ShouldQueue
             ->toArray();
 
         $messages = Filter::applyFilters('chat-messages', $messages, $prompt);
+        logger()->debug('messages', ['messages' => $messages]);
 
         if ('ollama' === config('llm.ai_api')) {
             $this->chatOllama($messages, $callback);

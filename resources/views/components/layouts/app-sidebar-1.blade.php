@@ -117,7 +117,7 @@
 
             init() {
                 document.addEventListener('notify', (e) => {
-                    this.notificationMessage = e.detail.message;
+                    this.notificationMessage = e.detail.message ?? e.detail[0];
                     this.displayNotification = true;
                     if (this.notificationTimeout) clearTimeout(this.notificationTimeout);
                     this.notificationTimeout = setTimeout(() => {

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use LLPhant\Chat\Message as LlphantMessage;
+use LLPhant\Embeddings\Document;
 use Vaites\ApacheTika\Client;
 
 class AppServiceProvider extends ServiceProvider
@@ -64,6 +65,24 @@ class AppServiceProvider extends ServiceProvider
             return $menu;
         });
 
+        $this->llmHooks();
+
+        $this->monitorQueues();
+    }
+
+    private function monitorQueues()
+    {
+        Queue::failing(function (JobFailed $event) {
+            logger()->info('Queue failed!', [
+                'connection' => $event->connectionName,
+                'job' => $event->job,
+                'exception' => $event->exception,
+            ]);
+        });
+    }
+
+    private function llmHooks(): void
+    {
         // Filter::addFilter('chat-messages', function (array $messages, string $prompt) {
         //     $messages[] = [
         //         'role' => 'system',
@@ -90,50 +109,36 @@ class AppServiceProvider extends ServiceProvider
         //     return $messages;
         // });
 
-        // Filter::addFilter('system-message', function (string $message, string $prompt) {
-        //     $results = (new ResourceLibrary)->search($prompt);
-        //
-        //     if (count($results) === 0) {
-        //         return $message;
-        //     }
-        //
-        //     $enhancement = '(CONTEXT: ';
-        //     foreach ($results as $result) {
-        //         $enhancement .= $result->text . PHP_EOL;
-        //     }
-        //     $enhancement .= ')';
-        //
-        //     return str_replace('{CONTEXT_PLACEHOLDER}', $enhancement, $message);
-        // });
-
-        Filter::addFilter('chat-prompt', function (string $prompt) {
-            $results = (new ResourceLibrary)->search($prompt);
+        Filter::addFilter('system-message', function (string $message, string $prompt) {
+            $results = (new ResourceLibrary)->searchFile($prompt);
             if (count($results) === 0) {
-                return $prompt;
+                return $message;
             }
 
-            $enhancement = 'CONTEXT: ';
+            $message .= PHP_EOL . PHP_EOL . 'CONTEXT: ' . PHP_EOL;
             foreach ($results as $result) {
-                $enhancement .= $result->text . ' | ';
+                $message .= $result->content . PHP_EOL;
             }
-            $prompt = $enhancement . $prompt;
 
-            logger()->info('new prompt', ['prompt' => $prompt]);
-
-            return $prompt;
+            return $message;
         });
 
-        $this->monitorQueues();
-    }
-
-    private function monitorQueues()
-    {
-        Queue::failing(function (JobFailed $event) {
-            logger()->info('Queue failed!', [
-                'connection' => $event->connectionName,
-                'job' => $event->job,
-                'exception' => $event->exception,
-            ]);
-        });
+        // Filter::addFilter('chat-prompt', function (string $prompt) {
+        //     /** @var array<Document> $results */
+        //     $results = (new ResourceLibrary)->searchFile($prompt);
+        //     if (count($results) === 0) {
+        //         return $prompt;
+        //     }
+        //
+        //     $enhancement = 'CONTEXT: ';
+        //     foreach ($results as $result) {
+        //         $enhancement .= $result->content . ' | ';
+        //     }
+        //     $prompt = $enhancement . $prompt;
+        //
+        //     logger()->info('new prompt', ['prompt' => $prompt]);
+        //
+        //     return $prompt;
+        // });
     }
 }

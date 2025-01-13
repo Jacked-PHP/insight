@@ -18,4 +18,8 @@ return [
 
 
     'ai_api' => env('AI_API', 'ollama'),
+
+    'file-store' => [
+        'path' => database_path(env('LLM_VECTOR_FILE_STORE', 'file-store')),
+    ],
 ];

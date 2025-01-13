@@ -6,6 +6,7 @@ use App\Enums\Meta\AssetMetadata;
 use App\Jobs\IndexVault;
 use App\Models\Asset;
 use App\Models\Vault;
+use App\Services\FileVectorStore;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Native\Laravel\Dialog;
@@ -16,13 +17,18 @@ class RemoteLibrary extends Component
 
     public function addVault()
     {
+        if (empty($this->path)) {
+            $this->dispatch('notify', 'Vault must not be empty.');
+            return;
+        }
+
         auth()->user()->vaults()->create(
             $this->only(['path'])
         );
 
         $this->path = '';
 
-        session()->flash('status', 'Vault successfully created.');
+        $this->dispatch('notify', 'Vault successfully created.');
     }
 
     public function openFolderDialog()
@@ -47,8 +53,10 @@ class RemoteLibrary extends Component
                     AssetMetadata::PDF_DATA->value,
                     AssetMetadata::CONTENT->value,
                 ]);
+                FileVectorStore::getFileStore()->removeDocumentFromFile($asset->path);
             });
             $vault->assets()->delete();
+
             $vault->delete();
         });
 

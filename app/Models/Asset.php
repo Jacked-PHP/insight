@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AssetType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ class Asset extends Model
         'vault_id',
         'user_id',
         'embedding_id',
+        'indexed_at',
     ];
 
     protected $casts = [
@@ -35,6 +37,7 @@ class Asset extends Model
         'vault_id' => 'integer',
         'user_id' => 'integer',
         'embedding_id' => 'integer',
+        'indexed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -47,18 +50,18 @@ class Asset extends Model
         return $this->belongsTo(Vault::class);
     }
 
-    public function scopeByPath($query, string $path)
+    public function scopeByPath(Builder $query, string $path): void
     {
-        return $query->where('path', $path);
+        $query->where('path', $path);
     }
 
-    public function scopeEmbedded($query)
+    public function scopeIndexed(Builder $query): void
     {
-        return $query->whereNotNull('embedding_id');
+        $query->whereNotNull('indexed_at');
     }
 
-    public function scopeNotEmbedded($query)
+    public function scopeNotIndexed(Builder $query): void
     {
-        return $query->whereNull('embedding_id');
+        $query->whereNull('indexed_at');
     }
 }
