@@ -102,7 +102,7 @@
                 });
 
                 // TODO: @deprecated
-                Native && Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
+                if (typeof Native !== "undefined") Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
                     $this.$dispatch('notify', {
                         message: 'Content extraction requested',
                         type: 'success',
@@ -110,7 +110,7 @@
                 });
 
                 // TODO: @deprecated
-                Native && Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
+                if (typeof Native !== "undefined") Native.on("App\\Events\\DocumentContentExtractionRequested", () => {
                     $this.$dispatch('notify', {
                         message: 'Content extraction requested',
                         type: 'success',
@@ -118,7 +118,7 @@
                 });
 
                 // TODO: @deprecated
-                Native && Native.on("App\\Events\\DocumentContentExtracted", () => {
+                if (typeof Native !== "undefined") Native.on("App\\Events\\DocumentContentExtracted", () => {
                     $this.$dispatch('notify', {
                         message: 'Content extraction finished',
                         type: 'success',

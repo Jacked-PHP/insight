@@ -45,7 +45,7 @@
             init() {
                 let $this = this;
 
-                Native && Native.on("App\\Events\\AssetIndexed", (e) => {
+                if (typeof Native !== "undefined") Native.on("App\\Events\\AssetIndexed", (e) => {
                     $this.$dispatch('notify', {
                         message: 'Asset Indexed: ' + e.name,
                         type: 'success',

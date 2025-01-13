@@ -19,10 +19,7 @@ Before start you need to make sure you have the following dependencies:
 
 - php8.2 or higher
 - php openswoole extension
-- docker (for postgres db)
-- For OCR: (for pdf and images, due to Tika lib)
-  - `sudo apt-get install tesseract-ocr`)
-  - Java JDK 8
+- docker
 
 ### Step 1
 
@@ -72,36 +69,37 @@ Make sure your `.env` is properly set:
 Then run the migrations:
 
 ```bash
-php artisan migrate
+php artisan migrate:fresh --seed
 ```
 
 Run the server (this is running jacked server):
 
 ```bash
-php artisan serve
+docker compose up -d
 ```
 
-Now you can visit `http://localhost:8000` and see the application running.
+Now you can visit `http://localhost:8080` and see the application running.
 
-## Vector DB
+## Vector DB & Embedding Solution
 
-The free opensource solution considers the following:
+There are a few options for vector DB. This project's sample version starts with a Filesystem solution. It is recommended to visit https://github.com/LLPhant/LLPhant for more information since the llm solution is built on top of that.
 
-- https://github.com/pgvector/pgvector
+The recommended models for embedding are:
 
-## Embedding Solution
-
-This application uses the following embedding solution:
-
-- ollama embedding model: [mxbai-embed-large](https://ollama.com/library/mxbai-embed-large)
+- [mxbai-embed-large](https://ollama.com/library/mxbai-embed-large)
+- [nomic-embed-text](https://ollama.com/library/nomic-embed-text)
 
 ## Ollama details
 
 To run Ollama, a suggested way would be to run through docker:
 
 ```shell
+# Consider network parameter if you want to connect to the same network as the php service.
 docker run -d -v ollama:$HOME/.ollama -p 11434:11434 --name ollama ollama/ollama
 ```
 
 > Reference: https://github.com/ollama/ollama/blob/main/docs/docker.md
 
+## Extra
+
+This project also runs on NativePHP. 
